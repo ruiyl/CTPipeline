@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-	public class StartBlockMono : BlockMono<StartBlockLogic>
+	public class StartBlockMono : BlockMono<StartBlockLogic>, IPlayerInteractable
 	{
 		[SerializeField] protected GateMono outGate;
 
@@ -16,9 +16,9 @@ namespace Assets.Scripts
 			logic = new StartBlockLogic(this);
 		}
 
-		public void ReceiveItem(ItemMono item)
+		public void Interact(CharacterMono character)
 		{
-			logic.OnReceiveItem(item);
+			logic.OnInteractedByPlayer(character);
 		}
 	}
 }

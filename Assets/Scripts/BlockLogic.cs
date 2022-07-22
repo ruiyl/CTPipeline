@@ -45,6 +45,10 @@
 			{
 				currentItem.StartTravelling(outPath);
 			}
+			else
+			{
+				currentItem.Drop();
+			}
 			currentItem = null;
 		}
 	}

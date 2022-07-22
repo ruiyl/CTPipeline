@@ -10,10 +10,15 @@ namespace Assets.Scripts
 
 		}
 
-		public void OnReceiveItem(ItemMono item)
+		public void ReceiveItem(ItemMono item)
 		{
 			currentItem = item;
 			PopItem(monoRef.OutGate, monoRef.OutGate.GetOutPath());
+		}
+
+		public void OnInteractedByPlayer(CharacterMono player)
+		{
+			ReceiveItem(player.PopItem());
 		}
 	}
 }
