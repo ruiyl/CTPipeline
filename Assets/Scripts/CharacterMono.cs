@@ -10,20 +10,44 @@ namespace Assets.Scripts
 		[SerializeField] private Transform itemDrop;
 		[SerializeField] private float speed;
 		[SerializeField] private float rotationMaxSpeed;
+		[SerializeField] private Player playerNumber;
+
+		private InputPoller input;
 
 		private IPlayerInteractable interactableObj;
 		private ItemMono holdItem;
 		private Quaternion targetRot;
 
+		public bool IsHolding { get => holdItem != null; }
+
+		public enum Player
+		{
+			Player1,
+			Player2,
+		}
+
+		private void Start()
+		{
+			input = new InputPoller(playerNumber);
+		}
+
+		public void SetPlayerNumber(Player player)
+		{
+			playerNumber = player;
+		}
+
 		private void Update()
 		{
-			bool handInput = Input.GetKeyDown(KeyCode.LeftShift);
+			bool handInput = input.GetInteractInput();
 
 			if (handInput)
 			{
 				if (interactableObj != null)
 				{
-					interactableObj.Interact(this);
+					if (IsInteractable(interactableObj))
+					{
+						interactableObj.Interact(this);
+					}
 				}
 				else if (holdItem != null)
 				{
@@ -34,8 +58,7 @@ namespace Assets.Scripts
 
 		private void FixedUpdate()
 		{
-			Vector3 inputDir = new Vector3((Input.GetKey(KeyCode.D) ? 1 : 0) + (Input.GetKey(KeyCode.A) ? -1 : 0), 0f,
-				(Input.GetKey(KeyCode.W) ? 1 : 0) + (Input.GetKey(KeyCode.S) ? -1 : 0));
+			Vector3 inputDir = input.GetDirectionInput();
 
 			Vector3 offset = inputDir.normalized * speed;
 			rb.velocity = offset;
@@ -48,7 +71,15 @@ namespace Assets.Scripts
 
 		private void OnTriggerEnter(Collider other)
 		{
-			if (other.TryGetComponent(out IPlayerInteractable item))
+			if (interactableObj == null && other.TryGetComponent(out IPlayerInteractable item))
+			{
+				interactableObj = item;
+			}
+		}
+
+		private void OnTriggerStay(Collider other)
+		{
+			if (interactableObj == null && other.TryGetComponent(out IPlayerInteractable item))
 			{
 				interactableObj = item;
 			}
@@ -56,7 +87,7 @@ namespace Assets.Scripts
 
 		private void OnTriggerExit(Collider other)
 		{
-			if (other.TryGetComponent(out IPlayerInteractable interactable) && interactable == interactableObj)
+			if (interactableObj != null && other.TryGetComponent(out IPlayerInteractable interactable) && interactable == interactableObj)
 			{
 				interactableObj = null;
 			}
@@ -89,6 +120,14 @@ namespace Assets.Scripts
 		{
 			holdItem.DropAt(position);
 			holdItem = null;
+		}
+
+		private bool IsInteractable(IPlayerInteractable interactable)
+		{
+			return (interactable is ItemMono && !IsHolding) ||
+				(interactable is BlockMono && IsHolding) ||
+				(interactable is StockBlock && !IsHolding) ||
+				(interactable is OutputBlock && IsHolding);
 		}
 	}
 }

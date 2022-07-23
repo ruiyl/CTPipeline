@@ -89,8 +89,16 @@ namespace Assets.Scripts
 
 		public void Interact(CharacterMono character)
 		{
-			character.HoldItem(this);
-			col.enabled = false;
+			if (!isTravelling)
+			{
+				character.HoldItem(this);
+				col.enabled = false;
+			}
+		}
+
+		public void Destroy()
+		{
+			Destroy(gameObject);
 		}
 	}
 }
