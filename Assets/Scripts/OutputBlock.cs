@@ -5,10 +5,12 @@ namespace Assets.Scripts
 {
 	public class OutputBlock : MonoBehaviour, IPlayerInteractable
 	{
+		[SerializeField] private GameManager gameManager;
+
 		public void Interact(CharacterMono character)
 		{
 			ItemMono item = character.PopItem();
-			// TODO: Check score
+			gameManager.SubmitItem(item);
 			item.Destroy();
 		}
 	}
