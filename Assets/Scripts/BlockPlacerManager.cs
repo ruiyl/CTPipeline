@@ -89,10 +89,7 @@ namespace Assets.Scripts
 
 		public void NotifyEndDrag()
 		{
-			if (draggedImg && !hasExitedDraggedImg)
-			{
-				draggedImg = null;
-			}
+			draggedImg = null;
 			//if (isRemoving)
 			//{
 			//	RemoveDraggedBlock();
