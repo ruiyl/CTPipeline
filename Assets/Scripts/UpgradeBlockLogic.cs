@@ -31,8 +31,8 @@ namespace Assets.Scripts
 					break;
 				case State.Busy:
 					state = State.Idle;
+					currentItem.Upgrade();
 					PopItem(monoRef.OutGate, monoRef.OutGate.GetOutPath());
-					currentItem = null;
 					break;
 			}
 		}
