@@ -82,7 +82,7 @@ namespace Assets.Scripts
 				GateMono otherEnd = endPoint == path.StartGate ? path.EndGate : path.StartGate;
 				endPoint.connectedPath.RemoveAt(i);
 				otherEnd.connectedPath.Remove(path);
-				Destroy(path.gameObject);
+				path.Destroy();
 			}
 		}
 

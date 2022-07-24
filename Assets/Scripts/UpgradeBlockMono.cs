@@ -11,11 +11,8 @@ namespace Assets.Scripts
 		public GateMono InGate { get => inGate; }
 		public GateMono OutGate { get => outGate; }
 
-		protected override void OnAwake()
+		protected override void CreateLogic()
 		{
-			base.OnAwake();
-			inGate.ClickEvent += OnGateClicked;
-			outGate.ClickEvent += OnGateClicked;
 			logic = new UpgradeBlockLogic(this);
 		}
 	}

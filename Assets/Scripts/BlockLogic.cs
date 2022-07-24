@@ -19,37 +19,40 @@
 			}
 			return true;
 		}
+
+		public virtual void PreDestroyBlock()
+		{
+
+		}
 	}
 
 	public abstract class BlockLogic<T> : BlockLogic where T : BlockMono
 	{
 		protected T monoRef;
-		protected ItemMono currentItem;
 
 		public BlockLogic(T blockMono)
 		{
 			monoRef = blockMono;
 		}
 
-		public void TakeItemIn(GateMono inGate)
+		public void TakeItemIn(ItemMono item, GateMono inGate)
 		{
-			currentItem.MoveTo(inGate.GetHidePosition());
-			currentItem.Hide();
+			item.MoveTo(inGate.GetHidePosition());
+			item.Hide();
 		}
 
-		public void PopItem(GateMono outGate, PipelinePathMono outPath = null)
+		public void PopItem(ItemMono item, GateMono outGate, PipelinePathMono outPath = null)
 		{
-			currentItem.Show();
+			item.Show();
 			if (outPath != null)
 			{
-				currentItem.MoveTo(outGate.GetShowPosition());
-				currentItem.StartTravelling(outPath);
+				item.MoveTo(outGate.GetShowPosition());
+				item.StartTravelling(outPath);
 			}
 			else
 			{
-				currentItem.DropAt(outGate.GetFrontPosition());
+				item.DropAt(outGate.GetFrontPosition());
 			}
-			currentItem = null;
 		}
 	}
 }

@@ -9,10 +9,8 @@ namespace Assets.Scripts
 
 		public GateMono OutGate { get => outGate; }
 
-		protected override void OnAwake()
+		protected override void CreateLogic()
 		{
-			base.OnAwake();
-			outGate.ClickEvent += OnGateClicked;
 			logic = new StartBlockLogic(this);
 		}
 

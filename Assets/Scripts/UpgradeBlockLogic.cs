@@ -5,6 +5,7 @@ namespace Assets.Scripts
 	public class UpgradeBlockLogic : BlockLogic<UpgradeBlockMono>
 	{
 		private State state;
+		private ItemMono currentItem;
 
 		private enum State
 		{
@@ -32,7 +33,7 @@ namespace Assets.Scripts
 				case State.Busy:
 					state = State.Idle;
 					currentItem.Upgrade();
-					PopItem(monoRef.OutGate, monoRef.OutGate.GetOutPath());
+					PopItem(currentItem, monoRef.OutGate, monoRef.OutGate.GetOutPath());
 					break;
 			}
 		}
@@ -40,8 +41,14 @@ namespace Assets.Scripts
 		private void OnReceiveItem(ItemMono item)
 		{
 			currentItem = item;
-			TakeItemIn(monoRef.InGate);
+			TakeItemIn(currentItem, monoRef.InGate);
 			state = State.Wait;
+		}
+
+		public override void PreDestroyBlock()
+		{
+			base.PreDestroyBlock();
+			currentItem.Destroy();
 		}
 	}
 }

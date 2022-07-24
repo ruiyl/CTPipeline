@@ -12,7 +12,6 @@ namespace Assets.Scripts
 		private Rigidbody rb;
 		private Collider col;
 		private PipelinePathMono pipelinePath;
-		private bool isTravelling;
 		private float currentDistance;
 
 		private const float PIPELINE_SPEED = 3f;
@@ -62,19 +61,19 @@ namespace Assets.Scripts
 		public void StartTravelling(PipelinePathMono pipelinePath)
 		{
 			this.pipelinePath = pipelinePath;
-			isTravelling = true;
+			this.pipelinePath.GetOn(this);
 			currentDistance = 0f;
 		}
 
 		public void StopTravelling()
 		{
+			pipelinePath.GetOff(this);
 			pipelinePath = null;
-			isTravelling = false;
 		}
 
 		private void FixedUpdate()
 		{
-			if (isTravelling)
+			if (pipelinePath != null)
 			{
 				currentDistance += Time.deltaTime * PIPELINE_SPEED;
 				rb.MovePosition(pipelinePath.GetPointAt(currentDistance));
@@ -84,7 +83,7 @@ namespace Assets.Scripts
 
 		private void Update()
 		{
-			if (isTravelling && currentDistance >= pipelinePath.GetLength())
+			if (pipelinePath != null && currentDistance >= pipelinePath.GetLength())
 			{
 				GateMono endGate = pipelinePath.EndGate;
 				StopTravelling();
@@ -94,7 +93,7 @@ namespace Assets.Scripts
 
 		public void Interact(CharacterMono character)
 		{
-			if (!isTravelling)
+			if (pipelinePath == null)
 			{
 				character.HoldItem(this);
 			}
@@ -127,11 +126,13 @@ namespace Assets.Scripts
 			return ItemData.ValueEqual(this.data, data);
 		}
 
-		public static void MergeItem(ItemMono lhs, ItemMono rhs)
+		public static ItemMono MergeItem(ItemMono lhs, ItemMono rhs)
 		{
 			ItemData newData = ItemData.ConcatItem(lhs.data, rhs.data);
 			rhs.Destroy();
 			lhs.SetData(newData);
+
+			return lhs;
 		}
 	}
 }

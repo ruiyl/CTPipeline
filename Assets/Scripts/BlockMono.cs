@@ -22,7 +22,7 @@ namespace Assets.Scripts
 			}
 		}
 
-		public void DestroyBlock()
+		public virtual void DestroyBlock()
 		{
 			foreach (GateMono gate in gateList)
 			{
@@ -38,12 +38,18 @@ namespace Assets.Scripts
 
 		private void Awake()
 		{
+			CreateLogic();
 			OnAwake();
 		}
 
+		protected abstract void CreateLogic();
+
 		protected virtual void OnAwake()
 		{
-
+			foreach (GateMono gate in gateList)
+			{
+				gate.ClickEvent += OnGateClicked;
+			}
 		}
 
 		private void Update()
@@ -54,6 +60,12 @@ namespace Assets.Scripts
 		protected void OnGateClicked(GateMono gate)
 		{
 			GateClickEvent?.Invoke(logic, gate);
+		}
+
+		public override void DestroyBlock()
+		{
+			logic.PreDestroyBlock();
+			base.DestroyBlock();
 		}
 	}
 }
