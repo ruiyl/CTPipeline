@@ -40,14 +40,14 @@
 		public void PopItem(GateMono outGate, PipelinePathMono outPath = null)
 		{
 			currentItem.Show();
-			currentItem.MoveTo(outGate.GetShowPosition());
 			if (outPath != null)
 			{
+				currentItem.MoveTo(outGate.GetShowPosition());
 				currentItem.StartTravelling(outPath);
 			}
 			else
 			{
-				currentItem.Drop();
+				currentItem.DropAt(outGate.GetFrontPosition());
 			}
 			currentItem = null;
 		}
