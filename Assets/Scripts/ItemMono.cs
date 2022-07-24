@@ -5,7 +5,9 @@ namespace Assets.Scripts
 {
 	public class ItemMono : MonoBehaviour, IPlayerInteractable
 	{
-		[SerializeField] private ItemData itemData;
+		[SerializeField] private ItemData data;
+		[SerializeField] private Transform valueTextPivot;
+		[SerializeField] private TMPro.TextMeshPro valueText;
 
 		private Rigidbody rb;
 		private Collider col;
@@ -35,6 +37,7 @@ namespace Assets.Scripts
 		{
 			rb.isKinematic = true;
 			rb.useGravity = false;
+			col.enabled = false;
 			transform.position = pos;
 			if (parent != null)
 			{
@@ -76,14 +79,16 @@ namespace Assets.Scripts
 				currentDistance += Time.deltaTime * PIPELINE_SPEED;
 				rb.MovePosition(pipelinePath.GetPointAt(currentDistance));
 			}
+			valueTextPivot.rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);
 		}
 
-		private void OnTriggerEnter(Collider other)
+		private void Update()
 		{
-			if (isTravelling && other.TryGetComponent(out GateMono gate) && gate == pipelinePath.EndGate)
+			if (isTravelling && currentDistance >= pipelinePath.GetLength())
 			{
+				GateMono endGate = pipelinePath.EndGate;
 				StopTravelling();
-				gate.PutItemIn(this);
+				endGate.PutItemIn(this);
 			}
 		}
 
@@ -92,13 +97,41 @@ namespace Assets.Scripts
 			if (!isTravelling)
 			{
 				character.HoldItem(this);
-				col.enabled = false;
 			}
+		}
+
+		public void SetData(ItemData data)
+		{
+			this.data = data;
+			UpdateValue();
+		}
+
+		public void Upgrade()
+		{
+			data.IncreaseIndices();
+			UpdateValue();
+		}
+
+		public void UpdateValue()
+		{
+			valueText.text = data.GetValue();
 		}
 
 		public void Destroy()
 		{
 			Destroy(gameObject);
+		}
+
+		public bool ValueEqual(ItemData data)
+		{
+			return ItemData.ValueEqual(this.data, data);
+		}
+
+		public static void MergeItem(ItemMono lhs, ItemMono rhs)
+		{
+			ItemData newData = ItemData.ConcatItem(lhs.data, rhs.data);
+			rhs.Destroy();
+			lhs.SetData(newData);
 		}
 	}
 }
