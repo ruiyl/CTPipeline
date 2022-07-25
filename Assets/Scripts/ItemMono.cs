@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -8,6 +8,7 @@ namespace Assets.Scripts
 		[SerializeField] private ItemData data;
 		[SerializeField] private Transform valueTextPivot;
 		[SerializeField] private TMPro.TextMeshPro valueText;
+		[SerializeField] private TMPro.TextMeshPro loopText;
 
 		private Rigidbody rb;
 		private Collider col;
@@ -15,6 +16,7 @@ namespace Assets.Scripts
 		private float currentDistance;
 
 		private const float PIPELINE_SPEED = 3f;
+		private const string LOOP_TEXT_FORMAT = "LOOP: {0}";
 
 		private void Awake()
 		{
@@ -114,6 +116,16 @@ namespace Assets.Scripts
 		public void UpdateValue()
 		{
 			valueText.text = data.GetValue();
+		}
+
+		public void SetLoopValue(int[] value)
+		{
+			string[] text = new string[value.Length];
+			for (int i = 0; i < value.Length; i++)
+			{
+				text[i] = string.Format(LOOP_TEXT_FORMAT, value[i]);
+			}
+			loopText.text = string.Join("\n", text);
 		}
 
 		public void Destroy()
