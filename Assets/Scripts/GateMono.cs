@@ -5,14 +5,18 @@ using UnityEngine.EventSystems;
 
 namespace Assets.Scripts
 {
-	public class GateMono : MonoBehaviour, IPointerClickHandler
+	public class GateMono : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 	{
 		public UnityAction<ItemMono> OpenEvent;
 		public UnityAction<GateMono> ClickEvent;
 
 		[SerializeField] private GateType direction;
+		[SerializeField] private TMPro.TextMeshPro labelText;
 
 		private List<PipelinePathMono> connectedPath;
+
+		private bool pointerIn;
+		private bool connectedState;
 
 		public GateType Direction { get => direction; }
 
@@ -82,8 +86,10 @@ namespace Assets.Scripts
 				GateMono otherEnd = endPoint == path.StartGate ? path.EndGate : path.StartGate;
 				endPoint.connectedPath.RemoveAt(i);
 				otherEnd.connectedPath.Remove(path);
+				otherEnd.SetConnectState(false);
 				path.Destroy();
 			}
+			endPoint.SetConnectState(false);
 		}
 
 		private void FireClickEvent()
@@ -101,6 +107,40 @@ namespace Assets.Scripts
 			{
 				CancelInvoke(nameof(FireClickEvent));
 				DisconnectAll(this);
+			}
+		}
+
+		public void OnPointerEnter(PointerEventData eventData)
+		{
+			pointerIn = true;
+			UpdateLabelColour();
+		}
+
+		public void OnPointerExit(PointerEventData eventData)
+		{
+			pointerIn = false;
+			UpdateLabelColour();
+		}
+
+		public void SetConnectState(bool isConnected)
+		{
+			connectedState = isConnected;
+			UpdateLabelColour();
+		}
+
+		private void UpdateLabelColour()
+		{
+			if (pointerIn)
+			{
+				labelText.color = Color.yellow;
+			}
+			else if (connectedState)
+			{
+				labelText.color = Color.green;
+			}
+			else
+			{
+				labelText.color = Color.white;
 			}
 		}
 	}

@@ -13,6 +13,10 @@
 			{
 				return false;
 			}
+			if (this == otherBlock)
+			{
+				return false;
+			}
 			if (gate.Direction == otherGate.Direction)
 			{
 				return false;

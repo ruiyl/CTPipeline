@@ -140,6 +140,8 @@ namespace Assets.Scripts
 			{
 				currentConnectionData.logic1 = logic;
 				currentConnectionData.gate1 = gate;
+
+				gate.SetConnectState(true);
 			}
 			else
 			{
@@ -167,6 +169,8 @@ namespace Assets.Scripts
 			{
 				GateMono.Connect(connection.gate1, connection.gate2);
 			}
+			connection.gate1.SetConnectState(isConnectionValid);
+			connection.gate2.SetConnectState(isConnectionValid);
 		}
 	}
 }
