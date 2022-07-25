@@ -127,7 +127,8 @@ namespace Assets.Scripts
 			return (interactable is ItemMono && !IsHolding) ||
 				(interactable is BlockMono && IsHolding) ||
 				(interactable is StockBlock && !IsHolding) ||
-				(interactable is OutputBlock && IsHolding);
+				(interactable is OutputBlock && IsHolding) ||
+				(interactable is ConditionBlockMono);
 		}
 	}
 }

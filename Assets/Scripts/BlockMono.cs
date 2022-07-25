@@ -14,9 +14,15 @@ namespace Assets.Scripts
 
 		private const int DOUBLE_CLICK = 2;
 
+		protected virtual void OnClicked(PointerEventData eventData)
+		{
+
+		}
+
 		public void OnPointerClick(PointerEventData eventData)
 		{
-			if (eventData.clickCount == DOUBLE_CLICK)
+			OnClicked(eventData);
+			if (eventData.clickCount == DOUBLE_CLICK && GameManager.IsInPlanMode)
 			{
 				BlockDClickEvent?.Invoke(this);
 			}
@@ -66,6 +72,12 @@ namespace Assets.Scripts
 		{
 			logic.PreDestroyBlock();
 			base.DestroyBlock();
+		}
+
+		protected override void OnClicked(PointerEventData eventData)
+		{
+			base.OnClicked(eventData);
+			logic.OnClicked(eventData);
 		}
 	}
 }

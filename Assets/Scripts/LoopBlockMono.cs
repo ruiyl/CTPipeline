@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Assets.Scripts
 {
@@ -16,11 +17,6 @@ namespace Assets.Scripts
 		public GateMono LoopInGate { get => loopInGate; }
 		public GateMono LoopOutGate { get => loopOutGate; }
 
-		private void Start()
-		{
-			SetLoopCount(2);
-		}
-
 		protected override void CreateLogic()
 		{
 			logic = new LoopBlockLogic(this);
@@ -28,7 +24,6 @@ namespace Assets.Scripts
 
 		public void SetLoopCount(int value)
 		{
-			logic.SetLoopCount(value);
 			loopCountText.text = value.ToString();
 		}
 	}

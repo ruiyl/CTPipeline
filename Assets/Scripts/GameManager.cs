@@ -9,6 +9,10 @@ namespace Assets.Scripts
 
 		private int score;
 
+		private static bool isInPlanMode;
+
+		public static bool IsInPlanMode { get => isInPlanMode; }
+
 		private void Awake()
 		{
 			goalItemDatas = new List<ItemData>();
@@ -41,6 +45,16 @@ namespace Assets.Scripts
 		private int GetScore(ItemData goal)
 		{
 			return 0;
+		}
+
+		public void EnterPlanMode()
+		{
+			isInPlanMode = true;
+		}
+
+		public void ExitPlanMode()
+		{
+			isInPlanMode = false;
 		}
 	}
 }

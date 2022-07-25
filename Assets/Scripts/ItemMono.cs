@@ -15,6 +15,8 @@ namespace Assets.Scripts
 		private PipelinePathMono pipelinePath;
 		private float currentDistance;
 
+		public ItemData Data { get => data; }
+
 		private const float PIPELINE_SPEED = 3f;
 		private const string LOOP_TEXT_FORMAT = "LOOP: {0}";
 

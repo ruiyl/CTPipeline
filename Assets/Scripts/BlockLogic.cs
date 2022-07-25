@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts
+﻿using UnityEngine.EventSystems;
+
+namespace Assets.Scripts
 {
 	public abstract class BlockLogic
 	{
@@ -25,6 +27,11 @@
 		}
 
 		public virtual void PreDestroyBlock()
+		{
+
+		}
+
+		public virtual void OnClicked(PointerEventData eventData)
 		{
 
 		}

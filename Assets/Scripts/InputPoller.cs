@@ -23,6 +23,10 @@ namespace Assets.Scripts
 
 		public Vector3 GetDirectionInput()
 		{
+			if (GameManager.IsInPlanMode)
+			{
+				return Vector3.zero;
+			}
 			Vector3 inputDir = new Vector3(
 				(Input.GetKey(keymap[KeyCodeInput.Right]) ? 1 : 0) + (Input.GetKey(keymap[KeyCodeInput.Left]) ? -1 : 0),
 				0f,
@@ -33,7 +37,7 @@ namespace Assets.Scripts
 		public bool GetInteractInput()
 		{
 			bool handInput = Input.GetKeyDown(keymap[KeyCodeInput.Interact]);
-			return handInput;
+			return handInput && !GameManager.IsInPlanMode;
 		}
 
 		private static Dictionary<KeyCodeInput, KeyCode> GenerateKeyMap(CharacterMono.Player player)

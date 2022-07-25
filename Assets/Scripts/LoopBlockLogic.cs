@@ -1,23 +1,20 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Assets.Scripts
 {
 	public class LoopBlockLogic : BlockLogic<LoopBlockMono>
 	{
-		private int loopCount;
+		private int loopNumberIndex;
 
 		private static Dictionary<ItemMono, List<int>> itemLoopTracker = new Dictionary<ItemMono, List<int>>();
+		private static List<int> availableLoopNumbers = new List<int>() { 2, 3, 4 };
 
 		public LoopBlockLogic(LoopBlockMono blockMono) : base(blockMono)
 		{
 			monoRef.InGate.OpenEvent += ReceiveItem;
 			monoRef.LoopInGate.OpenEvent += OnItemLoop;
-		}
-
-		public void SetLoopCount(int value)
-		{
-			loopCount = value;
 		}
 
 		private void ReceiveItem(ItemMono item)
@@ -42,7 +39,7 @@ namespace Assets.Scripts
 				return;
 			}
 			List<int> itemRecord = itemLoopTracker[item];
-			if (itemRecord[itemRecord.Count - 1] == loopCount)
+			if (itemRecord[itemRecord.Count - 1] == availableLoopNumbers[loopNumberIndex])
 			{
 				itemRecord.RemoveAt(itemRecord.Count - 1);
 				item.SetLoopValue(itemRecord.ToArray());
@@ -53,6 +50,16 @@ namespace Assets.Scripts
 				itemRecord[itemRecord.Count - 1]++;
 				item.SetLoopValue(itemRecord.ToArray());
 				PopItem(item, monoRef.LoopOutGate, monoRef.LoopOutGate.GetOutPath());
+			}
+		}
+
+		public override void OnClicked(PointerEventData eventData)
+		{
+			base.OnClicked(eventData);
+			if (GameManager.IsInPlanMode)
+			{
+				loopNumberIndex = (loopNumberIndex + 1) % availableLoopNumbers.Count;
+				monoRef.SetLoopCount(availableLoopNumbers[loopNumberIndex]);
 			}
 		}
 	}

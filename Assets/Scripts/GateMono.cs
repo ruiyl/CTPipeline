@@ -99,6 +99,10 @@ namespace Assets.Scripts
 
 		public void OnPointerClick(PointerEventData eventData)
 		{
+			if (!GameManager.IsInPlanMode)
+			{
+				return;
+			}
 			if (eventData.clickCount == SINGLE_CLICK)
 			{
 				Invoke(nameof(FireClickEvent), MULTICLICK_INTERVAL);
@@ -112,12 +116,20 @@ namespace Assets.Scripts
 
 		public void OnPointerEnter(PointerEventData eventData)
 		{
+			if (!GameManager.IsInPlanMode)
+			{
+				return;
+			}
 			pointerIn = true;
 			UpdateLabelColour();
 		}
 
 		public void OnPointerExit(PointerEventData eventData)
 		{
+			if (!GameManager.IsInPlanMode)
+			{
+				return;
+			}
 			pointerIn = false;
 			UpdateLabelColour();
 		}
