@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using TMPro;
 
 namespace Assets.Scripts
 {
@@ -9,6 +10,10 @@ namespace Assets.Scripts
 		[SerializeField] private Camera planModeOverlayCamera;
 		[SerializeField] private Canvas planModeOverlayCanvas;
 		[SerializeField] private RectTransform planModeUI;
+		[SerializeField] private RectTransform goalHolder;
+		[SerializeField] private TextMeshProUGUI scoreText;
+
+		private const string SCORE_TEXT = "SCORE: {0}";
 
 		public void SetPlanMode(bool isOn)
 		{
@@ -36,6 +41,36 @@ namespace Assets.Scripts
 			planModeOverlayCamera.gameObject.SetActive(false);
 			planModeOverlayCanvas.gameObject.SetActive(false);
 			planModeUI.gameObject.SetActive(false);
+		}
+
+		public void UpdateScore(int score)
+		{
+			scoreText.text = string.Format(SCORE_TEXT, score);
+		}
+
+		public void UpdateGoal(Goal[] goals)
+		{
+			int n = Mathf.Max(goalHolder.childCount, goals.Length);
+			for (int i = 0; i < n; i++)
+			{
+				RectTransform goalSlot;
+				if (i >= goals.Length)
+				{
+					goalHolder.GetChild(i).gameObject.SetActive(false);
+					continue;
+				}
+				else if (i >= goalHolder.childCount)
+				{
+					goalSlot = Instantiate(goalHolder.GetChild(goalHolder.childCount - 1) as RectTransform, goalHolder);
+				}
+				else
+				{
+					goalSlot = goalHolder.GetChild(i) as RectTransform;
+				}
+				goalSlot.gameObject.SetActive(true);
+				var text = goalSlot.GetChild(1).GetComponent<TextMeshPro>();
+				text.text = $"{goals[i].data} * {goals[i].amount}";
+			}
 		}
 	}
 }

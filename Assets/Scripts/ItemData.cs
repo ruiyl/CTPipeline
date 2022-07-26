@@ -78,5 +78,15 @@ namespace Assets.Scripts
 		{
 			return GetValue();
 		}
+
+		public int GetScore()
+		{
+			int sumIndices = 0;
+			foreach (int index in valueIndices)
+			{
+				sumIndices += index + 1;
+			}
+			return sumIndices * valueIndices.Count;
+		}
 	}
 }

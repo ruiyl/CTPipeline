@@ -5,7 +5,8 @@ namespace Assets.Scripts
 {
 	public class GameManager : MonoBehaviour
 	{
-		[SerializeField] private List<ItemData> goalItemDatas;
+		[SerializeField] private List<Goal> goals;
+		[SerializeField] private UIManager uiManager;
 
 		private int score;
 
@@ -13,38 +14,44 @@ namespace Assets.Scripts
 
 		public static bool IsInPlanMode { get => isInPlanMode; }
 
+		public const int PENALTY = -5;
+
 		private void Awake()
 		{
-			goalItemDatas = new List<ItemData>();
+			goals = new List<Goal>();
 		}
 
 		public void SubmitItem(ItemMono item)
 		{
-			bool correct = false;
-			ItemData correctGoal = null;
-			foreach (ItemData itemData in goalItemDatas)
+			int correctGoalIndex = -1;
+			for (int i = 0; i < goals.Count; i++)
 			{
-				if (item.ValueEqual(itemData))
+				if (item.ValueEqual(goals[i].data))
 				{
-					correct = true;
-					correctGoal = itemData;
+					correctGoalIndex = i;
 					break;
 				}
 			}
-			if (correct)
+			if (correctGoalIndex > 0)
 			{
-				AddScore(GetScore(correctGoal));
+				AddScore(goals[correctGoalIndex].data.GetScore());
+				goals[correctGoalIndex].amount--;
+				if (goals[correctGoalIndex].amount <= 0)
+				{
+					goals.RemoveAt(correctGoalIndex);
+				}
+				uiManager.UpdateGoal(goals.ToArray());
+			}
+			else
+			{
+				AddScore(PENALTY);
 			}
 		}
 
 		private void AddScore(int addingScore)
 		{
 			score += addingScore;
-		}
-
-		private int GetScore(ItemData goal)
-		{
-			return 0;
+			uiManager.UpdateScore(score);
 		}
 
 		public void EnterPlanMode()
@@ -55,6 +62,18 @@ namespace Assets.Scripts
 		public void ExitPlanMode()
 		{
 			isInPlanMode = false;
+		}
+	}
+
+	public class Goal
+	{
+		public ItemData data;
+		public int amount;
+
+		public Goal(ItemData data, int amount)
+		{
+			this.data = data;
+			this.amount = amount;
 		}
 	}
 }
