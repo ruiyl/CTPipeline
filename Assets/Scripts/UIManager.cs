@@ -12,6 +12,8 @@ namespace Assets.Scripts
 		[SerializeField] private RectTransform planModeUI;
 		[SerializeField] private RectTransform goalHolder;
 		[SerializeField] private TextMeshProUGUI scoreText;
+		[SerializeField] private GameObject playModeOnlyUIRoot;
+		[SerializeField] private GameObject planModeOnlyUIRoot;
 
 		private const string SCORE_TEXT = "SCORE: {0}";
 
@@ -34,6 +36,8 @@ namespace Assets.Scripts
 			planModeOverlayCamera.gameObject.SetActive(true);
 			planModeOverlayCanvas.gameObject.SetActive(true);
 			planModeUI.gameObject.SetActive(true);
+			planModeOnlyUIRoot.gameObject.SetActive(true);
+			playModeOnlyUIRoot.gameObject.SetActive(false);
 		}
 
 		public void ExitPlanMode()
@@ -41,6 +45,8 @@ namespace Assets.Scripts
 			planModeOverlayCamera.gameObject.SetActive(false);
 			planModeOverlayCanvas.gameObject.SetActive(false);
 			planModeUI.gameObject.SetActive(false);
+			planModeOnlyUIRoot.gameObject.SetActive(false);
+			playModeOnlyUIRoot.gameObject.SetActive(true);
 		}
 
 		public void UpdateScore(int score)
@@ -68,8 +74,8 @@ namespace Assets.Scripts
 					goalSlot = goalHolder.GetChild(i) as RectTransform;
 				}
 				goalSlot.gameObject.SetActive(true);
-				var text = goalSlot.GetChild(1).GetComponent<TextMeshPro>();
-				text.text = $"{goals[i].data} * {goals[i].amount}";
+				var text = goalSlot.GetChild(1).GetComponent<TextMeshProUGUI>();
+				text.text = $"'{goals[i].data}' * {goals[i].amount}";
 			}
 		}
 	}

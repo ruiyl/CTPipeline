@@ -794,7 +794,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a220363a1ed1b81439bed7156dc03788, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  direction: 0
+  direction: 1
   labelText: {fileID: 561677531471472751}
 --- !u!1001 &7475774393682012261
 PrefabInstance:
@@ -900,7 +900,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a220363a1ed1b81439bed7156dc03788, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  direction: 0
+  direction: 1
   labelText: {fileID: 5997541552696709107}
 --- !u!1001 &7475774393900168527
 PrefabInstance:

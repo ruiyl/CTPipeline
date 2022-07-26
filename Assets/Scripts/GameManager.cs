@@ -8,6 +8,7 @@ namespace Assets.Scripts
 		[SerializeField] private List<Goal> goals;
 		[SerializeField] private UIManager uiManager;
 
+		private GoalGenerator goalGenerator;
 		private int score;
 
 		private static bool isInPlanMode;
@@ -19,6 +20,13 @@ namespace Assets.Scripts
 		private void Awake()
 		{
 			goals = new List<Goal>();
+			goalGenerator = new BasicGoalGenerator();
+		}
+
+		public void StartGate()
+		{
+			goals.AddRange(goalGenerator.GetNewGoals());
+			uiManager.UpdateGoal(goals.ToArray());
 		}
 
 		public void SubmitItem(ItemMono item)
@@ -32,7 +40,7 @@ namespace Assets.Scripts
 					break;
 				}
 			}
-			if (correctGoalIndex > 0)
+			if (correctGoalIndex >= 0)
 			{
 				AddScore(goals[correctGoalIndex].data.GetScore());
 				goals[correctGoalIndex].amount--;
@@ -45,6 +53,12 @@ namespace Assets.Scripts
 			else
 			{
 				AddScore(PENALTY);
+			}
+
+			if (goals.Count == 0)
+			{
+				goals.AddRange(goalGenerator.GetNewGoals());
+				uiManager.UpdateGoal(goals.ToArray());
 			}
 		}
 
@@ -62,6 +76,11 @@ namespace Assets.Scripts
 		public void ExitPlanMode()
 		{
 			isInPlanMode = false;
+		}
+
+		public void QuitGame()
+		{
+			Application.Quit();
 		}
 	}
 
