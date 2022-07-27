@@ -1,13 +1,16 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
 	public class GameSessionManager : MonoBehaviour
 	{
-		private bool initialised;
+		[SerializeField] private Image fadeOverlay;
 
-		private static GameSessionManager instance;
+		private bool initialised;
 
 		private int numOfPlayer;
 		private int p1CharID;
@@ -19,13 +22,23 @@ namespace Assets.Scripts
 		public int P1CharID { get => p1CharID; }
 		public int P2CharID { get => p2CharID; }
 
+		private static GameSessionManager instance;
+
 		public const int CHAR_NUMBER = 4;
+
+		private const float FADE_DURATION = 0.25f;
 
 		public enum PlayMode
 		{
 			Undefined = 0,
 			Tutorial = 1,
 			Arcade = 2,
+		}
+
+		private enum SceneIndex
+		{
+			MainMenu = 0,
+			Game = 1,
 		}
 
 		public static GameSessionManager Instance
@@ -84,7 +97,7 @@ namespace Assets.Scripts
 
 		public void SetPlayMode(PlayMode mode)
 		{
-			selectedMode = mode;
+			selectedMode = mode; 
 		}
 
 		public void OffsetCharacterID(int playerID, int offset)
@@ -118,12 +131,41 @@ namespace Assets.Scripts
 
 		public void StartGame()
 		{
-
+			fadeOverlay.gameObject.SetActive(true);
+			StartCoroutine(FadeTask(true, () => LoadScene((int)SceneIndex.Game)));
 		}
 
 		public void ReturnToMainMenu()
 		{
+			fadeOverlay.gameObject.SetActive(true);
+			StartCoroutine(FadeTask(true, () => LoadScene((int)SceneIndex.MainMenu)));
+		}
 
+		private IEnumerator FadeTask(bool fadeOut, UnityAction onFinishFade)
+		{
+			Color curCol = fadeOverlay.color;
+			fadeOverlay.color = new Color(curCol.r, curCol.g, curCol.b, fadeOut ? 0f : 1f);
+			Color tarCol = new Color(curCol.r, curCol.g, curCol.b, fadeOut ? 1f : 0f);
+			curCol = fadeOverlay.color;
+			float t = 0f;
+			while (t < FADE_DURATION)
+			{
+				yield return null;
+				t += Time.deltaTime;
+				fadeOverlay.color = Color.Lerp(curCol, tarCol, t / FADE_DURATION);
+			}
+			onFinishFade?.Invoke();
+		}
+
+		private void LoadScene(int sceneIndex)
+		{
+			AsyncOperation loadOp = SceneManager.LoadSceneAsync(sceneIndex, LoadSceneMode.Single);
+			loadOp.completed += EnterScene;
+		}
+
+		private void EnterScene(AsyncOperation loadOp)
+		{
+			StartCoroutine(FadeTask(false, () => fadeOverlay.gameObject.SetActive(false)));
 		}
 
 		public void QuitGame()
