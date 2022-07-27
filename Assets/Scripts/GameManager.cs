@@ -77,11 +77,6 @@ namespace Assets.Scripts
 		{
 			isInPlanMode = false;
 		}
-
-		public void QuitGame()
-		{
-			Application.Quit();
-		}
 	}
 
 	public class Goal
