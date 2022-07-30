@@ -30,6 +30,8 @@ namespace Assets.Scripts
 			Control,
 			PlanMode,
 			MergeBlock,
+			LoopBlock,
+			SwitchBlock,
 			AdvanceBlock,
 			End,
 		}
