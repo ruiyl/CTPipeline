@@ -21,6 +21,7 @@ namespace Assets.Scripts
 		public int NumOfPlayer { get => numOfPlayer; }
 		public int P1CharID { get => p1CharID; }
 		public int P2CharID { get => p2CharID; }
+		public PlayMode SelectedMode { get => selectedMode; }
 
 		private static GameSessionManager instance;
 

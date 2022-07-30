@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 namespace Assets.Scripts
@@ -23,6 +24,9 @@ namespace Assets.Scripts
 		private Vector3 draggOffset;
 		//private bool isRemoving;
 		private GateConnection currentConnectionData;
+
+		public UnityAction<BlockMono> BlockPlaced;
+		public UnityAction<PipelinePathMono> ConnectionCreated;
 
 		private struct GateConnection
 		{
@@ -89,7 +93,9 @@ namespace Assets.Scripts
 
 		public void NotifyEndDrag()
 		{
+			BlockPlaced?.Invoke(draggedBlock.GetComponent<BlockMono>());
 			draggedImg = null;
+			draggedBlock = null;
 			//if (isRemoving)
 			//{
 			//	RemoveDraggedBlock();
@@ -167,7 +173,8 @@ namespace Assets.Scripts
 				connection.logic2.CheckConnectionValid(connection.gate2, connection.logic1, connection.gate1);
 			if (isConnectionValid)
 			{
-				GateMono.Connect(connection.gate1, connection.gate2);
+				PipelinePathMono path = GateMono.Connect(connection.gate1, connection.gate2);
+				ConnectionCreated?.Invoke(path);
 			}
 			connection.gate1.SetConnectState(isConnectionValid);
 			connection.gate2.SetConnectState(isConnectionValid);

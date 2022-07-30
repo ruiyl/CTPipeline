@@ -65,7 +65,7 @@ namespace Assets.Scripts
 			return connectedPath.Count > index ? connectedPath[index] : null;
 		}
 
-		public static void Connect(GateMono gate1, GateMono gate2)
+		public static PipelinePathMono Connect(GateMono gate1, GateMono gate2)
 		{
 			GameObject pathObj = new GameObject("ConnectPath");
 			PipelinePathMono pathComponent = pathObj.AddComponent<PipelinePathMono>();
@@ -76,6 +76,8 @@ namespace Assets.Scripts
 
 			gate1.connectedPath.Add(pathComponent);
 			gate2.connectedPath.Add(pathComponent);
+
+			return pathComponent;
 		}
 
 		public static void DisconnectAll(GateMono endPoint)

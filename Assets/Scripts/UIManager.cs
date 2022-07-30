@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
@@ -14,8 +15,23 @@ namespace Assets.Scripts
 		[SerializeField] private TextMeshProUGUI scoreText;
 		[SerializeField] private GameObject playModeOnlyUIRoot;
 		[SerializeField] private GameObject planModeOnlyUIRoot;
+		[SerializeField] private GameObject p2Control;
+		[SerializeField] private Toggle planModeToggle;
+		[SerializeField] private GameObject[] blockIconLocks;
 
 		private const string SCORE_TEXT = "SCORE: {0}";
+		private const string GOAL_TEXT = "{0} PIECES OF\n'{1}'";
+
+		public void DisableP2()
+		{
+			p2Control.SetActive(false);
+		}
+
+		public void SetPlanModeButton(bool enable, bool interactable)
+		{
+			planModeToggle.gameObject.SetActive(enable);
+			planModeToggle.interactable = interactable;
+		}
 
 		public void SetPlanMode(bool isOn)
 		{
@@ -28,6 +44,21 @@ namespace Assets.Scripts
 			{
 				gameManager.ExitPlanMode();
 				ExitPlanMode();
+			}
+		}
+
+		public void SetBlockIconLockState(bool isLocked, int index = -1)
+		{
+			if (index < 0)
+			{
+				for (int i = 0; i < blockIconLocks.Length; i++)
+				{
+					blockIconLocks[i].SetActive(isLocked);
+				}
+			}
+			else
+			{
+				blockIconLocks[index].SetActive(isLocked);
 			}
 		}
 
@@ -75,7 +106,7 @@ namespace Assets.Scripts
 				}
 				goalSlot.gameObject.SetActive(true);
 				var text = goalSlot.GetChild(1).GetComponent<TextMeshProUGUI>();
-				text.text = $"'{goals[i].data}' * {goals[i].amount}";
+				text.text = string.Format(GOAL_TEXT, goals[i].amount, goals[i].data);
 			}
 		}
 	}
