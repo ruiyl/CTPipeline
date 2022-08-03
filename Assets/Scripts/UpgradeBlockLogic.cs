@@ -16,7 +16,7 @@ namespace Assets.Scripts
 			currentItem = item;
 			TakeItemIn(currentItem, monoRef.InGate);
 			currentItem.Upgrade();
-			PopItem(currentItem, monoRef.OutGate, monoRef.OutGate.GetOutPath());
+			PopItem(currentItem, monoRef.OutGate, monoRef.OutGate.GetConnectedPath());
 		}
 	}
 }

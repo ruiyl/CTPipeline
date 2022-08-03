@@ -12,7 +12,7 @@ namespace Assets.Scripts
 
 		public void ReceiveItem(ItemMono item)
 		{
-			PopItem(item, monoRef.OutGate, monoRef.OutGate.GetOutPath());
+			PopItem(item, monoRef.OutGate, monoRef.OutGate.GetConnectedPath());
 		}
 
 		public void OnInteractedByPlayer(CharacterMono player)

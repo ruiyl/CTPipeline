@@ -42,7 +42,7 @@ namespace Assets.Scripts
 
 			if (handInput)
 			{
-				if (interactableObj != null)
+				if ((interactableObj as MonoBehaviour) != null)
 				{
 					if (IsInteractable(interactableObj))
 					{
@@ -71,7 +71,7 @@ namespace Assets.Scripts
 
 		private void OnTriggerEnter(Collider other)
 		{
-			if (interactableObj == null && other.TryGetComponent(out IPlayerInteractable item))
+			if ((interactableObj as MonoBehaviour) == null && other.TryGetComponent(out IPlayerInteractable item))
 			{
 				interactableObj = item;
 			}
@@ -79,7 +79,7 @@ namespace Assets.Scripts
 
 		private void OnTriggerStay(Collider other)
 		{
-			if (interactableObj == null && other.TryGetComponent(out IPlayerInteractable item))
+			if ((interactableObj as MonoBehaviour) == null && other.TryGetComponent(out IPlayerInteractable item))
 			{
 				interactableObj = item;
 			}
@@ -87,7 +87,7 @@ namespace Assets.Scripts
 
 		private void OnTriggerExit(Collider other)
 		{
-			if (interactableObj != null && other.TryGetComponent(out IPlayerInteractable interactable) && interactable == interactableObj)
+			if ((interactableObj as MonoBehaviour) != null && other.TryGetComponent(out IPlayerInteractable interactable) && interactable == interactableObj)
 			{
 				interactableObj = null;
 			}

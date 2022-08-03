@@ -18,11 +18,11 @@ namespace Assets.Scripts
 			TakeItemIn(item, monoRef.InGate);
 			if (resolver.CheckItem(item))
 			{
-				PopItem(item, monoRef.TrueOutGate, monoRef.TrueOutGate.GetOutPath());
+				PopItem(item, monoRef.TrueOutGate, monoRef.TrueOutGate.GetConnectedPath());
 			}
 			else
 			{
-				PopItem(item, monoRef.FalseOutGate, monoRef.FalseOutGate.GetOutPath());
+				PopItem(item, monoRef.FalseOutGate, monoRef.FalseOutGate.GetConnectedPath());
 			}
 		}
 

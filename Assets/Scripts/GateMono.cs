@@ -14,11 +14,13 @@ namespace Assets.Scripts
 		[SerializeField] private TMPro.TextMeshPro labelText;
 
 		private List<PipelinePathMono> connectedPath;
+		private BlockMono block;
 
 		private bool pointerIn;
 		private bool connectedState;
 
 		public GateType Direction { get => direction; }
+		public BlockMono Block { get => block; }
 
 		private const float MULTICLICK_INTERVAL = 0.3f;
 		private const int SINGLE_CLICK = 1;
@@ -33,6 +35,11 @@ namespace Assets.Scripts
 		private void Awake()
 		{
 			connectedPath = new List<PipelinePathMono>();
+		}
+
+		public void SetBlock(BlockMono block)
+		{
+			this.block = block;
 		}
 
 		public void PutItemIn(ItemMono item)
@@ -60,7 +67,7 @@ namespace Assets.Scripts
 			return transform.position + transform.forward;
 		}
 
-		public PipelinePathMono GetOutPath(int index = 0)
+		public PipelinePathMono GetConnectedPath(int index = 0)
 		{
 			return connectedPath.Count > index ? connectedPath[index] : null;
 		}

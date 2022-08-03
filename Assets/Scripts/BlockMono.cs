@@ -11,6 +11,7 @@ namespace Assets.Scripts
 
 		public UnityAction<BlockLogic, GateMono> GateClickEvent;
 		public UnityAction<BlockMono> BlockDClickEvent;
+		public UnityAction<BlockMono> BlockDestroyedEvent;
 
 		private const int DOUBLE_CLICK = 2;
 
@@ -54,6 +55,7 @@ namespace Assets.Scripts
 		{
 			foreach (GateMono gate in gateList)
 			{
+				gate.SetBlock(this);
 				gate.ClickEvent += OnGateClicked;
 			}
 		}
@@ -72,6 +74,7 @@ namespace Assets.Scripts
 		{
 			logic.PreDestroyBlock();
 			base.DestroyBlock();
+			BlockDestroyedEvent?.Invoke(this);
 		}
 
 		protected override void OnClicked(PointerEventData eventData)

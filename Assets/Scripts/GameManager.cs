@@ -30,6 +30,7 @@ namespace Assets.Scripts
 					break;
 				case GameSessionManager.PlayMode.Arcade:
 					goalKeeper = new ArcadeGoalKeeper(uiManager, this);
+					goalKeeper.GetNewGoals();
 					break;
 			}
 			LoadPlayers();
@@ -47,11 +48,6 @@ namespace Assets.Scripts
 				p2Go.SetActive(false);
 				uiManager.DisableP2();
 			}
-		}
-
-		public void StartGame()
-		{
-
 		}
 
 		public void SubmitItem(ItemMono item)

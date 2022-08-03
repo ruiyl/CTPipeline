@@ -27,7 +27,7 @@ namespace Assets.Scripts
 				TakeItemIn(leftItem, monoRef.LeftInGate);
 				TakeItemIn(rightItem, monoRef.RightInGate);
 				ItemMono newItem = ItemMono.MergeItem(leftItem, rightItem);
-				PopItem(newItem, monoRef.OutGate, monoRef.OutGate.GetOutPath());
+				PopItem(newItem, monoRef.OutGate, monoRef.OutGate.GetConnectedPath());
 			}
 		}
 
@@ -39,6 +39,19 @@ namespace Assets.Scripts
 		private void ReceiveRightItem(ItemMono item)
 		{
 			rightGateQueue.Enqueue(item);
+		}
+
+		public override void PreDestroyBlock()
+		{
+			base.PreDestroyBlock();
+			while (leftGateQueue.Count > 0)
+			{
+				leftGateQueue.Dequeue().Destroy();
+			}
+			while (rightGateQueue.Count > 0)
+			{
+				rightGateQueue.Dequeue().Destroy();
+			}
 		}
 	}
 }

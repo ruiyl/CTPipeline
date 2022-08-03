@@ -9,9 +9,15 @@ namespace Assets.Scripts
 		[SerializeField] private GameObject p2CharDemoPanel;
 		[SerializeField] private Transform p1CharRoot;
 		[SerializeField] private Transform p2CharRoot;
+		[SerializeField] private GameObject[] tutorialClearedLabels; 
 
 		private void Start()
 		{
+			bool[] clearedTutorialStates = GameSessionManager.Instance.GetClearedTutorial();
+			for (int i = 0; i < clearedTutorialStates.Length; i++)
+			{
+				tutorialClearedLabels[i].SetActive(clearedTutorialStates[i]);
+			}
 			UpdateCharacterDemo();
 		}
 
@@ -23,7 +29,25 @@ namespace Assets.Scripts
 
 		public void OnSetPlayerMode(int mode)
 		{
-			GameSessionManager.Instance.SetPlayMode((GameSessionManager.PlayMode)mode);
+			GameSessionManager.PlayMode playMode = (GameSessionManager.PlayMode)mode;
+			GameSessionManager.Instance.SetPlayMode(playMode);
+			if (playMode != GameSessionManager.PlayMode.Tutorial)
+			{
+				GameSessionManager.Instance.StartGame();
+			}
+		}
+
+		public void OnSetTutorialLevel(int level)
+		{
+			switch (level)
+			{
+				case 0:
+					GameSessionManager.Instance.SetTutorialLevel(TutorialManager.TutorialStep.Intro);
+					break;
+				case 1:
+					GameSessionManager.Instance.SetTutorialLevel(TutorialManager.TutorialStep.LoopBlock);
+					break;
+			}
 			GameSessionManager.Instance.StartGame();
 		}
 
@@ -47,6 +71,11 @@ namespace Assets.Scripts
 				p1CharRoot.GetChild(i).gameObject.SetActive(i == GameSessionManager.Instance.P1CharID);
 				p2CharRoot.GetChild(i).gameObject.SetActive(i == GameSessionManager.Instance.P2CharID);
 			}
+		}
+
+		public void OnQuitButton()
+		{
+			GameSessionManager.Instance.RequestQuit();
 		}
 	}
 }

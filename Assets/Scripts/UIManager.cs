@@ -2,12 +2,14 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 namespace Assets.Scripts
 {
 	public class UIManager : MonoBehaviour
 	{
 		[SerializeField] private GameManager gameManager;
+		[SerializeField] private BlockPlacerManager blockPlacerManager;
 		[SerializeField] private Camera planModeOverlayCamera;
 		[SerializeField] private Canvas planModeOverlayCanvas;
 		[SerializeField] private RectTransform planModeUI;
@@ -17,7 +19,11 @@ namespace Assets.Scripts
 		[SerializeField] private GameObject planModeOnlyUIRoot;
 		[SerializeField] private GameObject p2Control;
 		[SerializeField] private Toggle planModeToggle;
+		[SerializeField] private VideoPlayer blockInfoVideoPlayer;
+		[SerializeField] private GameObject blockInfoPanel;
+		[SerializeField] private GameObject[] blockInfoTexts;
 		[SerializeField] private GameObject[] blockIconLocks;
+		[SerializeField] private VideoClip[] blockInfoVideos;
 
 		private const string SCORE_TEXT = "SCORE: {0}";
 		private const string GOAL_TEXT = "{0} PIECES OF\n'{1}'";
@@ -25,6 +31,22 @@ namespace Assets.Scripts
 		public void DisableP2()
 		{
 			p2Control.SetActive(false);
+		}
+
+		public void OnOpenBlockInfo(int index)
+		{
+			if (index < 0)
+			{
+				blockInfoPanel.SetActive(false);
+				return;
+			}
+			blockInfoPanel.SetActive(true);
+			for (int i = 0; i < blockInfoTexts.Length; i++)
+			{
+				blockInfoTexts[i].SetActive(i == index);
+			}
+			blockInfoVideoPlayer.clip = blockInfoVideos[index];
+			blockInfoVideoPlayer.Play();
 		}
 
 		public void SetPlanModeButton(bool enable, bool interactable)
@@ -108,6 +130,16 @@ namespace Assets.Scripts
 				var text = goalSlot.GetChild(1).GetComponent<TextMeshProUGUI>();
 				text.text = string.Format(GOAL_TEXT, goals[i].amount, goals[i].data);
 			}
+		}
+
+		public void OnClearBlocks()
+		{
+			blockPlacerManager.DestroyAllBlock();
+		}
+
+		public void OnReturnButton()
+		{
+			GameSessionManager.Instance.RequestReturn();
 		}
 	}
 }

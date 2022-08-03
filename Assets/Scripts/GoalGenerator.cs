@@ -22,7 +22,7 @@ namespace Assets.Scripts
 				for (int j = 0; j < length; j++)
 				{
 					types.Add((ItemData.ValueType)Random.Range(0, 2));
-					indices.Add(Random.Range(0, 5));
+					indices.Add(Random.Range(0, 4));
 				}
 				ItemData goalData = new ItemData(types, indices);
 				goals[i] = new Goal(goalData, Random.Range(1, 4));
@@ -55,9 +55,12 @@ namespace Assets.Scripts
 					goals = new Goal[2] { new Goal(new ItemData(new List<ItemData.ValueType>() { ItemData.ValueType.Letter, ItemData.ValueType.Number }, new List<int>() { 0, 0 }), 1),
 					new Goal(new ItemData(new List<ItemData.ValueType>() { ItemData.ValueType.Letter, ItemData.ValueType.Number }, new List<int>() { 1, 1 }), 1)};
 					break;
-				case TutorialManager.TutorialStep.AdvanceBlock:
-					goals = new Goal[2] { new Goal(new ItemData(new List<ItemData.ValueType>() { ItemData.ValueType.Letter, ItemData.ValueType.Number }, new List<int>() { 3, 1 }), 2),
-					new Goal(new ItemData(new List<ItemData.ValueType>() { ItemData.ValueType.Letter, ItemData.ValueType.Number }, new List<int>() { 2, 3 }), 2)};
+				case TutorialManager.TutorialStep.LoopBlock:
+					goals = new Goal[2] { new Goal(new ItemData(new List<ItemData.ValueType>() { ItemData.ValueType.Letter }, new List<int>() { 3 }), 3),
+					new Goal(new ItemData(new List<ItemData.ValueType>() { ItemData.ValueType.Number }, new List<int>() { 3 }), 3)};
+					break;
+				case TutorialManager.TutorialStep.SwitchBlock:
+					goals = new Goal[1] { new Goal(new ItemData(new List<ItemData.ValueType>() { ItemData.ValueType.Letter, ItemData.ValueType.Number }, new List<int>() { 3, 1 }), 3),};
 					break;
 			}
 			step++;

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 namespace Assets.Scripts
 {
-	[System.Serializable]
+	[Serializable]
 	public struct BlockSpawnPair
 	{
 		public GameObject blockPrefab;
@@ -21,9 +21,14 @@ namespace Assets.Scripts
 		private GameObject draggedImg;
 		private bool hasExitedDraggedImg;
 		private GameObject draggedBlock;
+		private GameObject prefabToSpawn;
 		private Vector3 draggOffset;
-		//private bool isRemoving;
+
 		private GateConnection currentConnectionData;
+
+		private Dictionary<Type, int> blockCounts;
+		private List<BlockMono> spawnedBlocks;
+		private List<ItemMono> spawnedItems;
 
 		public UnityAction<BlockMono> BlockPlaced;
 		public UnityAction<PipelinePathMono> ConnectionCreated;
@@ -36,9 +41,11 @@ namespace Assets.Scripts
 			public GateMono gate2;
 		}
 
-		public void NotifyPointerInTrash(bool isInside)
+		private void Awake()
 		{
-			//isRemoving = isInside;
+			blockCounts = new Dictionary<Type, int>();
+			spawnedBlocks = new List<BlockMono>();
+			spawnedItems = new List<ItemMono>();
 		}
 
 		private void RemoveDraggedBlock()
@@ -48,7 +55,7 @@ namespace Assets.Scripts
 
 		public void OnPointerExitBlockImg(PointerEventData eventData, GameObject imgObj)
 		{
-			if (imgObj == draggedImg)
+			if (imgObj == draggedImg && draggedBlock == null)
 			{
 				hasExitedDraggedImg = true;
 				GameObject blockPrefab = null;
@@ -62,9 +69,7 @@ namespace Assets.Scripts
 				}
 				if (blockPrefab != null)
 				{
-					SpawnBlock(blockPrefab);
-					draggOffset = Vector3.zero;
-					DragBlock(eventData);
+					prefabToSpawn = blockPrefab;
 				}
 			}
 		}
@@ -77,15 +82,13 @@ namespace Assets.Scripts
 
 		public void NotifyBeginDragFromBlock(PointerEventData eventData, GameObject draggedObj)
 		{
-			//draggedBlock = draggedObj;
-			//DragBlock(eventData, true);
+
 		}
 
 		public void NotifyDrag(PointerEventData eventData, GameObject draggedObj)
 		{
-			bool draggingFromImg = draggedObj == draggedImg && hasExitedDraggedImg;
-			//bool draggingBlock = draggedObj == draggedBlock;
-			if (draggingFromImg)// || draggingBlock)
+			bool draggingFromImg = (draggedObj == draggedImg) && hasExitedDraggedImg;
+			if (draggingFromImg)
 			{
 				DragBlock(eventData);
 			}
@@ -93,13 +96,13 @@ namespace Assets.Scripts
 
 		public void NotifyEndDrag()
 		{
-			BlockPlaced?.Invoke(draggedBlock.GetComponent<BlockMono>());
+			if (draggedBlock)
+			{
+				BlockPlaced?.Invoke(draggedBlock.GetComponent<BlockMono>());
+			}
 			draggedImg = null;
 			draggedBlock = null;
-			//if (isRemoving)
-			//{
-			//	RemoveDraggedBlock();
-			//}
+			prefabToSpawn = null;
 		}
 
 		private void OnBlockDoubleClicked(BlockMono block)
@@ -107,11 +110,22 @@ namespace Assets.Scripts
 			block.DestroyBlock();
 		}
 
+		public void OnSpawnedItem(ItemMono item)
+		{
+			spawnedItems.Add(item);
+		}
+
 		public void DragBlock(PointerEventData eventData, bool setOffset = false)
 		{
 			Ray pointerRay = mainCamera.ScreenPointToRay(eventData.position);
 			if (Physics.Raycast(pointerRay, out RaycastHit hit, float.MaxValue, LayerMask.GetMask("PlacablePlane")))
 			{
+				if (prefabToSpawn != null)
+				{
+					SpawnBlock(prefabToSpawn);
+					draggOffset = Vector3.zero;
+					prefabToSpawn = null;
+				}
 				if (setOffset)
 				{
 					draggOffset = draggedBlock.transform.position - hit.point;
@@ -123,16 +137,54 @@ namespace Assets.Scripts
 			}
 		}
 
-		public void SpawnBlock(GameObject blockPrefab)
+		private void SpawnBlock(GameObject blockPrefab)
 		{
-			draggedBlock = Instantiate(blockPrefab);
-			//Movable movableComp = draggedBlock.GetComponent<Movable>();
-			//movableComp.BeginDragEvent.AddListener(NotifyBeginDragFromBlock);
-			//movableComp.DragEvent.AddListener(NotifyDrag);
-			//movableComp.EndDragEvent.AddListener(NotifyEndDrag);
+			draggedBlock = Instantiate(blockPrefab, new Vector3(0f, -10f, 0f), Quaternion.identity);
 			BlockMono block = draggedBlock.GetComponent<BlockMono>();
 			block.GateClickEvent += OnGateClicked;
 			block.BlockDClickEvent += OnBlockDoubleClicked;
+			block.BlockDestroyedEvent += OnBlockDestroyed;
+
+			if (!blockCounts.ContainsKey(block.GetType()))
+			{
+				blockCounts[block.GetType()] = 0;
+			}
+			blockCounts[block.GetType()]++;
+			spawnedBlocks.Add(block);
+		}
+
+		private void OnBlockDestroyed(BlockMono block)
+		{
+			blockCounts[block.GetType()]--;
+			spawnedBlocks.Remove(block);
+		}
+
+		public int GetBlockCount(Type blockType)
+		{
+			if (blockCounts.TryGetValue(blockType, out int count))
+			{
+				return count;
+			}
+			return 0;
+		}
+
+		public void DestroyAllBlock()
+		{
+			for (int i = spawnedBlocks.Count - 1; i >= 0; i--)
+			{
+				spawnedBlocks[i].DestroyBlock();
+			}
+			spawnedBlocks.Clear();
+			blockCounts.Clear();
+
+			for (int i = spawnedItems.Count - 1; i >= 0; i--)
+			{
+				if (spawnedItems[i] != null)
+				{
+					spawnedItems[i].Destroy();
+				}
+			}
+			spawnedItems.Clear();
 		}
 
 		private void OnGateClicked(BlockLogic logic, GateMono gate)

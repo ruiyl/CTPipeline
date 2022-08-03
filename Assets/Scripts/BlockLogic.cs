@@ -23,6 +23,10 @@ namespace Assets.Scripts
 			{
 				return false;
 			}
+			if (gate.GetConnectedPath() != null)
+			{
+				return false;
+			}
 			return true;
 		}
 

@@ -9,6 +9,9 @@ namespace Assets.Scripts
 	public class GameSessionManager : MonoBehaviour
 	{
 		[SerializeField] private Image fadeOverlay;
+		[SerializeField] private GameObject confirmOverlay;
+		[SerializeField] private GameObject quitPanel;
+		[SerializeField] private GameObject returnPanel;
 
 		private bool initialised;
 
@@ -17,11 +20,13 @@ namespace Assets.Scripts
 		private int p2CharID;
 
 		private PlayMode selectedMode;
+		private TutorialManager.TutorialStep tutorialStep;
 
 		public int NumOfPlayer { get => numOfPlayer; }
 		public int P1CharID { get => p1CharID; }
 		public int P2CharID { get => p2CharID; }
 		public PlayMode SelectedMode { get => selectedMode; }
+		public TutorialManager.TutorialStep TutorialStep { get => tutorialStep; }
 
 		private static GameSessionManager instance;
 
@@ -72,7 +77,7 @@ namespace Assets.Scripts
 			}
 			else if (instance != this)
 			{
-				Destroy(instance);
+				Destroy(gameObject);
 				return;
 			}
 			if (!initialised)
@@ -86,6 +91,9 @@ namespace Assets.Scripts
 			initialised = true;
 
 			selectedMode = PlayMode.Undefined;
+			//selectedMode = PlayMode.Tutorial;
+			tutorialStep = TutorialManager.TutorialStep.Undefined;
+			//selectedMode = PlayMode.Arcade;
 			numOfPlayer = 1;
 			p1CharID = 0;
 			p2CharID = 1;
@@ -99,6 +107,27 @@ namespace Assets.Scripts
 		public void SetPlayMode(PlayMode mode)
 		{
 			selectedMode = mode; 
+		}
+
+		public void SetTutorialLevel(TutorialManager.TutorialStep step)
+		{
+			tutorialStep = step;
+		}
+
+		public void SaveClearedTutorial(int value)
+		{
+			PlayerPrefs.SetInt($"ClearedTutorial{value}", 1);
+		}
+
+		public bool[] GetClearedTutorial()
+		{
+			bool[] clearedStates = new bool[2];
+			for (int i = 0; i < clearedStates.Length; i++)
+			{
+				string key = $"ClearedTutorial{i}";
+				clearedStates[i] = PlayerPrefs.HasKey(key) && (PlayerPrefs.GetInt(key) == 1);
+			}
+			return clearedStates;
 		}
 
 		public void OffsetCharacterID(int playerID, int offset)
@@ -167,6 +196,18 @@ namespace Assets.Scripts
 		private void EnterScene(AsyncOperation loadOp)
 		{
 			StartCoroutine(FadeTask(false, () => fadeOverlay.gameObject.SetActive(false)));
+		}
+
+		public void RequestQuit()
+		{
+			confirmOverlay.SetActive(true);
+			quitPanel.SetActive(true);
+		}
+
+		public void RequestReturn()
+		{
+			confirmOverlay.SetActive(true);
+			returnPanel.SetActive(true);
 		}
 
 		public void QuitGame()

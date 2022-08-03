@@ -9,7 +9,7 @@ namespace Assets.Scripts
 		private int loopNumberIndex;
 
 		private static Dictionary<ItemMono, List<int>> itemLoopTracker = new Dictionary<ItemMono, List<int>>();
-		private static List<int> availableLoopNumbers = new List<int>() { 2, 3, 4 };
+		private static List<int> availableLoopNumbers = new List<int>() { 2, 3 };
 
 		public LoopBlockLogic(LoopBlockMono blockMono) : base(blockMono)
 		{
@@ -27,7 +27,7 @@ namespace Assets.Scripts
 			}
 			itemLoopTracker[item].Add(1);
 			item.SetLoopValue(itemLoopTracker[item].ToArray());
-			PopItem(item, monoRef.LoopOutGate, monoRef.LoopOutGate.GetOutPath());
+			PopItem(item, monoRef.LoopOutGate, monoRef.LoopOutGate.GetConnectedPath());
 		}
 
 		private void OnItemLoop(ItemMono item)
@@ -43,13 +43,13 @@ namespace Assets.Scripts
 			{
 				itemRecord.RemoveAt(itemRecord.Count - 1);
 				item.SetLoopValue(itemRecord.ToArray());
-				PopItem(item, monoRef.OutGate, monoRef.OutGate.GetOutPath());
+				PopItem(item, monoRef.OutGate, monoRef.OutGate.GetConnectedPath());
 			}
 			else
 			{
 				itemRecord[itemRecord.Count - 1]++;
 				item.SetLoopValue(itemRecord.ToArray());
-				PopItem(item, monoRef.LoopOutGate, monoRef.LoopOutGate.GetOutPath());
+				PopItem(item, monoRef.LoopOutGate, monoRef.LoopOutGate.GetConnectedPath());
 			}
 		}
 

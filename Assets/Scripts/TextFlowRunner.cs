@@ -14,6 +14,8 @@ namespace Assets.Scripts
 		private List<GameObject> textGoList;
 		private int currentIndex;
 
+		public int CurrentIndex { get => currentIndex; }
+
 		private void Start()
 		{
 			textGoList = new List<GameObject>();
