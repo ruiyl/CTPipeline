@@ -91,9 +91,7 @@ namespace Assets.Scripts
 			initialised = true;
 
 			selectedMode = PlayMode.Undefined;
-			//selectedMode = PlayMode.Tutorial;
 			tutorialStep = TutorialManager.TutorialStep.Undefined;
-			//selectedMode = PlayMode.Arcade;
 			numOfPlayer = 1;
 			p1CharID = 0;
 			p2CharID = 1;
@@ -167,6 +165,8 @@ namespace Assets.Scripts
 
 		public void ReturnToMainMenu()
 		{
+			selectedMode = PlayMode.Undefined;
+			tutorialStep = TutorialManager.TutorialStep.Undefined;
 			fadeOverlay.gameObject.SetActive(true);
 			StartCoroutine(FadeTask(true, () => LoadScene((int)SceneIndex.MainMenu)));
 		}

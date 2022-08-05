@@ -16,6 +16,9 @@ namespace Assets.Scripts
 		[SerializeField] private GameObject p2ControlHighlight;
 		[SerializeField] private GameObject goalHighlight;
 		[SerializeField] private GameObject controlTutorialBlock;
+		[SerializeField] private GameObject createInstrct1Highlight;
+		[SerializeField] private GameObject createInstrct2Highlight;
+		[SerializeField] private GameObject inputHighlight;
 		[SerializeField] private TextFlowRunner introTutorialTextFlow;
 		[SerializeField] private TextFlowRunner controlTutorialTextFlow;
 		[SerializeField] private TextFlowRunner planModeTutorialTextFlow;
@@ -121,20 +124,36 @@ namespace Assets.Scripts
 							textFlow.SetNextButtonState(true);
 							break;
 						case 5:
+							createInstrct1Highlight.SetActive(true);
 							uiManager.SetBlockIconLockState(false, 0);
 							textFlow.SetNextButtonState(false);
 							break;
 						case 6:
-							uiManager.SetBlockIconLockState(false, 1);
-							break;
-						case 8:
+							createInstrct1Highlight.SetActive(false);
 							textFlow.SetNextButtonState(true);
 							break;
+						case 7:
+							createInstrct2Highlight.SetActive(true);
+							uiManager.SetBlockIconLockState(false, 1);
+							textFlow.SetNextButtonState(false);
+							break;
+						case 8:
+							createInstrct2Highlight.SetActive(false);
+							break;
 						case 9:
+							textFlow.SetNextButtonState(true);
+							break;
+						case 10:
 							uiManager.SetPlanModeButton(true, true);
 							textFlow.SetNextButtonState(false);
 							break;
 						case 11:
+							inputHighlight.SetActive(true);
+							outputHighlight.SetActive(true);
+							break;
+						case 12:
+							inputHighlight.SetActive(false);
+							outputHighlight.SetActive(false);
 							textFlow.SetNextButtonState(true);
 							break;
 					}
@@ -226,6 +245,7 @@ namespace Assets.Scripts
 
 		public void StartStep()
 		{
+			goalKeeper?.SetGeneratorStep(step);
 			switch (step)
 			{
 				case TutorialStep.Intro:
@@ -236,7 +256,6 @@ namespace Assets.Scripts
 					break;
 				case TutorialStep.Control:
 					controlTutorialTextFlow.gameObject.SetActive(true);
-					goalKeeper.SetGeneratorStep(step);
 					uiManager.SetPlanModeButton(false, false);
 					uiManager.SetBlockIconLockState(true);
 					break;
@@ -246,17 +265,14 @@ namespace Assets.Scripts
 					uiManager.SetBlockIconLockState(true);
 					break;
 				case TutorialStep.MergeBlock:
-					goalKeeper.SetGeneratorStep(TutorialStep.MergeBlock);
 					mergeBlockTutorialTextFlow.gameObject.SetActive(true);
 					uiManager.SetBlockIconLockState(true);
 					break;
 				case TutorialStep.LoopBlock:
-					goalKeeper.SetGeneratorStep(TutorialStep.LoopBlock);
 					loopBlockTutorialTextFlow.gameObject.SetActive(true);
 					uiManager.SetBlockIconLockState(true);
 					break;
 				case TutorialStep.SwitchBlock:
-					goalKeeper.SetGeneratorStep(TutorialStep.SwitchBlock);
 					switchBlockTutorialTextFlow.gameObject.SetActive(true);
 					uiManager.SetBlockIconLockState(true);
 					break;
@@ -289,11 +305,23 @@ namespace Assets.Scripts
 				case TutorialStep.SwitchBlock:
 					switchBlockTutorialTextFlow.gameObject.SetActive(false);
 					GameSessionManager.Instance.SaveClearedTutorial(1);
-					GameSessionManager.Instance.ReturnToMainMenu();
 					break;
 			}
 			step++;
-			StartStep();
+			GameSessionManager.Instance.SetTutorialLevel(step);
+			if (step == TutorialStep.End)
+			{
+				GameSessionManager.Instance.ReturnToMainMenu();
+			}
+			else if (step == TutorialStep.Control)
+			{
+				StartStep();
+			}
+			else if (step != TutorialStep.Undefined)
+			{
+				GameSessionManager.Instance.StartGame();
+			}
+			//StartStep();
 		}
 
 		private void HandleScoreAdded(int addedScore)
@@ -320,9 +348,9 @@ namespace Assets.Scripts
 					}
 					break;
 				case TutorialStep.PlanMode:
-					if (planModeTutorialTextFlow.CurrentIndex == 10)
+					if (planModeTutorialTextFlow.CurrentIndex == 11)
 					{
-						planModeTutorialTextFlow.SetStep(11, true);
+						planModeTutorialTextFlow.SetStep(12, true);
 					}
 					break;
 				case TutorialStep.MergeBlock:
@@ -357,7 +385,7 @@ namespace Assets.Scripts
 					}
 					else
 					{
-						planModeTutorialTextFlow.SetStep(10, true);
+						planModeTutorialTextFlow.SetStep(11, true);
 					}
 					break;
 			}
@@ -378,10 +406,10 @@ namespace Assets.Scripts
 					{
 						planModeTutorialTextFlow.SetStep(6, true);
 					}
-					else if (planModeTutorialTextFlow.CurrentIndex == 6 &&
+					else if (planModeTutorialTextFlow.CurrentIndex == 7 &&
 						upBlockCount > 0)
 					{
-						planModeTutorialTextFlow.SetStep(7, true);
+						planModeTutorialTextFlow.SetStep(8, true);
 					}
 					break;
 				case TutorialStep.MergeBlock:
@@ -410,9 +438,11 @@ namespace Assets.Scripts
 			switch (step)
 			{
 				case TutorialStep.PlanMode:
-					if (pathMono.StartGate.Block is StartBlockMono && pathMono.EndGate.Block is UpgradeBlockMono)
+					if (pathMono.StartGate.Block is StartBlockMono startBlock && pathMono.EndGate.Block is UpgradeBlockMono)
 					{
-						planModeTutorialTextFlow.SetStep(8, true);
+						planModeTutorialTextFlow.SetStep(9, true);
+						Vector3 pos = startBlock.transform.position;
+						inputHighlight.transform.position = new Vector3(pos.x, inputHighlight.transform.position.y, pos.z);
 					}
 					break;
 				case TutorialStep.MergeBlock:

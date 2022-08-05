@@ -22,6 +22,7 @@ namespace Assets.Scripts
 
 		private void Awake()
 		{
+			isInPlanMode = false;
 			switch (GameSessionManager.Instance.SelectedMode)
 			{
 				case GameSessionManager.PlayMode.Tutorial:

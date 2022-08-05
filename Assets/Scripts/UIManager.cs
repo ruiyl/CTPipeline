@@ -27,6 +27,14 @@ namespace Assets.Scripts
 
 		private const string SCORE_TEXT = "SCORE: {0}";
 		private const string GOAL_TEXT = "{0} PIECES OF\n'{1}'";
+		private static readonly string[] BLOCK_INFO_VIDEO_URLS = new string[5]
+		{
+			"https://ruiyl.github.io/CTPipeline/Assets/Videos/Input&Inc%20Block%20Info.mp4",
+			"https://ruiyl.github.io/CTPipeline/Assets/Videos/Input&Inc%20Block%20Info.mp4",
+			"https://ruiyl.github.io/CTPipeline/Assets/Videos/Join%20Block%20Info.mp4",
+			"https://ruiyl.github.io/CTPipeline/Assets/Videos/Loop%20Block%20Info.mp4",
+			"https://ruiyl.github.io/CTPipeline/Assets/Videos/Switch%20Block%20Info.mp4",
+		};
 
 		public void DisableP2()
 		{
@@ -45,7 +53,14 @@ namespace Assets.Scripts
 			{
 				blockInfoTexts[i].SetActive(i == index);
 			}
-			blockInfoVideoPlayer.clip = blockInfoVideos[index];
+			if (Application.platform == RuntimePlatform.WebGLPlayer)
+			{
+				blockInfoVideoPlayer.url = BLOCK_INFO_VIDEO_URLS[index];
+			}
+			else
+			{
+				blockInfoVideoPlayer.clip = blockInfoVideos[index];
+			}
 			blockInfoVideoPlayer.Play();
 		}
 
@@ -95,6 +110,7 @@ namespace Assets.Scripts
 
 		public void ExitPlanMode()
 		{
+			OnOpenBlockInfo(-1);
 			planModeOverlayCamera.gameObject.SetActive(false);
 			planModeOverlayCanvas.gameObject.SetActive(false);
 			planModeUI.gameObject.SetActive(false);
