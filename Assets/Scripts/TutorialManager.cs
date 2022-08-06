@@ -381,11 +381,17 @@ namespace Assets.Scripts
 				case TutorialStep.PlanMode:
 					if (isIn)
 					{
-						planModeTutorialTextFlow.SetStep(4, true);
+						if (planModeTutorialTextFlow.CurrentIndex == 3)
+						{
+							planModeTutorialTextFlow.SetStep(4, true);
+						}
 					}
 					else
 					{
-						planModeTutorialTextFlow.SetStep(11, true);
+						if (planModeTutorialTextFlow.CurrentIndex == 10)
+						{
+							planModeTutorialTextFlow.SetStep(11, true);
+						}
 					}
 					break;
 			}
@@ -438,7 +444,7 @@ namespace Assets.Scripts
 			switch (step)
 			{
 				case TutorialStep.PlanMode:
-					if (pathMono.StartGate.Block is StartBlockMono startBlock && pathMono.EndGate.Block is UpgradeBlockMono)
+					if (planModeTutorialTextFlow.CurrentIndex == 8 && pathMono.StartGate.Block is StartBlockMono startBlock && pathMono.EndGate.Block is UpgradeBlockMono)
 					{
 						planModeTutorialTextFlow.SetStep(9, true);
 						Vector3 pos = startBlock.transform.position;
@@ -446,7 +452,7 @@ namespace Assets.Scripts
 					}
 					break;
 				case TutorialStep.MergeBlock:
-					if (pathMono.EndGate.Block is MergeBlockMono)
+					if (mergeBlockTutorialTextFlow.CurrentIndex == 2 && pathMono.EndGate.Block is MergeBlockMono)
 					{
 						for (int i = paths.Count - 2; i >= 0; i--) // since pathMono is the last one
 						{
@@ -465,23 +471,26 @@ namespace Assets.Scripts
 					}
 					break;
 				case TutorialStep.LoopBlock:
-					for (int i = paths.Count - 1; i >= 0; i--)
+					if (loopBlockTutorialTextFlow.CurrentIndex == 4)
 					{
-						if (paths[i] == null)
+						for (int i = paths.Count - 1; i >= 0; i--)
 						{
-							paths.RemoveAt(i); // Clear space for a bit
-							continue;
-						}
-						if (paths[i].StartGate.Block is StartBlockMono)
-						{
-							if ((paths[i].EndGate.Block is LoopBlockMono loopBlock) &&
-								loopBlock.LoopOutGate.GetConnectedPath() != null &&
-								loopBlock.LoopInGate.GetConnectedPath() != null &&
-								loopBlock.LoopOutGate.GetConnectedPath().EndGate.Block is UpgradeBlockMono &&
-								loopBlock.LoopOutGate.GetConnectedPath().EndGate.Block == loopBlock.LoopInGate.GetConnectedPath().StartGate.Block)
+							if (paths[i] == null)
 							{
-								loopBlockTutorialTextFlow.SetStep(5, true);
-								break;
+								paths.RemoveAt(i); // Clear space for a bit
+								continue;
+							}
+							if (paths[i].StartGate.Block is StartBlockMono)
+							{
+								if ((paths[i].EndGate.Block is LoopBlockMono loopBlock) &&
+									loopBlock.LoopOutGate.GetConnectedPath() != null &&
+									loopBlock.LoopInGate.GetConnectedPath() != null &&
+									loopBlock.LoopOutGate.GetConnectedPath().EndGate.Block is UpgradeBlockMono &&
+									loopBlock.LoopOutGate.GetConnectedPath().EndGate.Block == loopBlock.LoopInGate.GetConnectedPath().StartGate.Block)
+								{
+									loopBlockTutorialTextFlow.SetStep(5, true);
+									break;
+								}
 							}
 						}
 					}
